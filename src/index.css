@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  background-color: #f1f5f9;
+}
+
+/* 섹션 간 구분을 위한 그림자 효과 */
+section {
+  position: relative;
+  z-index: 1;
+}
