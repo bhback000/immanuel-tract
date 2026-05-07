@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 // 1. Gemini API 설정 (본인의 키를 입력하세요)
-const apiKey = "AIzaSyD95CE50R8mGP1cRO4AqJh-HuKiKRyVsAw"; 
+const apiKey = "AIzaSyDOHPOmV_rWE_QaMYkAUKGWY_2RPYM_Mrs"; 
 const model = "gemini-2.5-flash-preview-09-2025";
 
 const styles = {
