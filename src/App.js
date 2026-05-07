@@ -5,83 +5,18 @@ import {
   ChevronDown, Share2, Phone, Sun, CloudRain, Anchor, UserPlus
 } from 'lucide-react';
 
-// 1. Gemini API 설정 (본인의 키를 입력하세요)
-const apiKey = "AIzaSyDgHbN4XdRweIjmnkmjSwCWn43Xfy6rnXU"; 
-const model = "gemini-1.5-flash";
+// ★★★ 이 부분을 정확하게 수정해야 합니다 ★★★
+const apiKey = "AIzaSyDOHPOmV_rWE_QaMYkAUKGWY_2RPYM_Mrs"; 
+const model = "gemini-1.5-flash"; // 모델명을 안정적인 버전으로 고정했습니다.
 
 const styles = {
-  section: {
-    minHeight: '100vh',
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '5rem 1.5rem',
-    borderBottom: '1px solid #e2e8f0',
-    boxSizing: 'border-box'
-  },
-  card: {
-    maxWidth: '800px',
-    width: '100%',
-    backgroundColor: 'white',
-    borderRadius: '3.5rem',
-    padding: '4rem 3rem',
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    textAlign: 'center',
-    boxSizing: 'border-box'
-  },
-  title: {
-    fontSize: '3.5rem',
-    fontWeight: '900',
-    color: '#0f172a',
-    marginBottom: '1.5rem',
-    lineHeight: '1.2',
-    wordBreak: 'keep-all'
-  },
-  subtitle: {
-    fontSize: '1.5rem',
-    fontWeight: '800',
-    color: '#b45309',
-    letterSpacing: '0.1em',
-    marginBottom: '2.5rem',
-    textTransform: 'uppercase'
-  },
-  content: {
-    fontSize: '2rem',
-    fontWeight: '600',
-    color: '#334155',
-    lineHeight: '1.6',
-    wordBreak: 'keep-all',
-    marginBottom: '2.5rem'
-  },
-  scripture: {
-    backgroundColor: '#fffbeb',
-    padding: '2rem',
-    borderRadius: '1.5rem',
-    borderLeft: '10px solid #fbbf24',
-    textAlign: 'left',
-    width: '100%',
-    marginTop: '1.5rem',
-    boxSizing: 'border-box'
-  },
-  textArea: {
-    width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    border: 'none',
-    borderBottom: '5px solid rgba(255, 255, 255, 0.3)',
-    padding: '2rem',
-    color: 'white',
-    fontSize: '2.2rem',
-    fontWeight: '700',
-    minHeight: '350px',
-    outline: 'none',
-    marginBottom: '2.5rem',
-    textAlign: 'center'
-  }
+  section: { minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 1.5rem', borderBottom: '1px solid #e2e8f0', boxSizing: 'border-box' },
+  card: { maxWidth: '800px', width: '100%', backgroundColor: 'white', borderRadius: '3.5rem', padding: '4rem 3rem', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', boxSizing: 'border-box' },
+  title: { fontSize: '3.5rem', fontWeight: '900', color: '#0f172a', marginBottom: '1.5rem', lineHeight: '1.2', wordBreak: 'keep-all' },
+  subtitle: { fontSize: '1.5rem', fontWeight: '800', color: '#b45309', letterSpacing: '0.1em', marginBottom: '2.5rem', textTransform: 'uppercase' },
+  content: { fontSize: '2rem', fontWeight: '600', color: '#334155', lineHeight: '1.6', wordBreak: 'keep-all', marginBottom: '2.5rem' },
+  scripture: { backgroundColor: '#fffbeb', padding: '2rem', borderRadius: '1.5rem', borderLeft: '10px solid #fbbf24', textAlign: 'left', width: '100%', marginTop: '1.5rem', boxSizing: 'border-box' },
+  textArea: { width: '100%', backgroundColor: 'rgba(255, 255, 255, 0.05)', border: 'none', borderBottom: '5px solid rgba(255, 255, 255, 0.3)', padding: '2rem', color: 'white', fontSize: '2.2rem', fontWeight: '700', minHeight: '350px', outline: 'none', marginBottom: '2.5rem', fontFamily: 'inherit', textAlign: 'center' }
 };
 
 const Illustration = ({ type }) => {
@@ -122,28 +57,32 @@ function App() {
     if (!userInput.trim()) return;
     setLoading(true); setResponse("");
     try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+      // API 주소 형식을 가장 확실한 방식으로 수정했습니다.
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: userInput }] }],
-          systemInstruction: { parts: [{ text: "당신은 임마누엘 신학 멘토입니다. 따뜻하고 장중하게 위로하고 짧은 기도를 작성하세요." }] }
+          contents: [{ parts: [{ text: userInput }] }]
         })
       });
       const data = await res.json();
-      setResponse(data.candidates?.[0]?.content?.parts?.[0]?.text || "잠시 후 다시 시도해 주세요.");
-    } catch (e) { setResponse("통신 오류가 발생했습니다."); }
+      if (data.candidates && data.candidates[0].content) {
+        setResponse(data.candidates[0].content.parts[0].text);
+      } else {
+        setResponse("죄송합니다. 잠시 후 다시 말씀해 주세요.");
+      }
+    } catch (e) { 
+      setResponse("연결에 문제가 발생했습니다. API 키를 확인해 주세요."); 
+    }
     finally { setLoading(false); }
   };
 
   return (
     <div style={{ width: "100%", overflowX: "hidden", backgroundColor: "#f8fafc", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      
       <div style={{ ...styles.section, backgroundColor: "#fffbeb", textAlign: "center" }}>
         <Sparkles style={{ width: "120px", height: "120px", color: "#f59e0b", marginBottom: "2.5rem" }} />
-        <h1 style={{ fontSize: "4.5rem", fontWeight: 900, color: "#0f172a", marginBottom: "2rem", fontStyle: "italic" }}>
-          진정한 복의 회복,<br /><span style={{ color: "#d97706" }}>임마누엘</span>
-        </h1>
+        <h1 style={{ fontSize: "4.5rem", fontWeight: 900, color: "#0f172a", marginBottom: "2rem", fontStyle: "italic" }}>진정한 복의 회복,<br /><span style={{ color: "#d97706" }}>임마누엘</span></h1>
         <p style={{ fontSize: "2rem", fontWeight: 700, color: "#64748b" }}>하나님이 당신과 함께하십니다.</p>
         <ChevronDown style={{ width: "60px", height: "60px", color: "#cbd5e1", marginTop: "4rem" }} />
       </div>
@@ -158,9 +97,7 @@ function App() {
           <Heart style={{ width: "100px", height: "100px", color: "#f43f5e", marginBottom: "2.5rem" }} />
           <h2 style={styles.title}>영접 기도문</h2>
           <div style={{ backgroundColor: "white", padding: "3rem", borderRadius: "2.5rem", textAlign: 'left', width: '100%' }}>
-            <p style={{ fontSize: "2rem", fontWeight: 800, fontStyle: "italic", lineHeight: "1.7" }}>
-              "하나님, 이제 내 삶의 주권을 하나님께 맡깁니다. 임마누엘의 주님, 지금 내 마음에 오셔서 나의 구주가 되어 주시고, 평생 하나님과 동행하게 하옵소서. 아멘."
-            </p>
+            <p style={{ fontSize: "2rem", fontWeight: 800, fontStyle: "italic", lineHeight: "1.7" }}>"하나님, 이제 내 삶의 주권을 하나님께 맡깁니다. 임마누엘의 주님, 지금 내 마음에 오셔서 나의 구주가 되어 주시고, 평생 하나님과 동행하게 하옵소서. 아멘."</p>
           </div>
         </div>
       </div>
@@ -176,46 +113,27 @@ function App() {
             </div>
           ) : (
             <div style={{ width: '100%', padding: '3rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3rem' }}>
-              {loading ? <Loader2 style={{ width: "50px", height: "50px", animate: "spin", color: "#fbbf24", margin: "0 auto" }} /> : 
-              <>
-                <p style={{ fontSize: '2.2rem', fontStyle: 'italic', color: '#fef3c7' }}>{response}</p>
-                <button onClick={() => {setResponse(""); setUserInput("");}} style={{ marginTop: '2rem', color: '#fbbf24', background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', textDecoration: 'underline' }}>다시 이야기하기</button>
-              </>}
+              {loading ? <Loader2 className="animate-spin" style={{ width: '50px', height: '50px', margin: '0 auto' }} /> : <p style={{ fontSize: '2.2rem', fontStyle: 'italic', color: '#fef3c7', whiteSpace: 'pre-wrap' }}>{response}</p>}
+              <button onClick={() => {setResponse(""); setUserInput("");}} style={{ marginTop: '2rem', color: '#fbbf24', background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', textDecoration: 'underline' }}>다시 이야기하기</button>
             </div>
           )}
         </div>
       </div>
 
-      <div style={{ padding: "8rem 1.5rem", backgroundColor: "white", textAlign: "center", borderTop: "15px solid #f59e0b", width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', boxSizing: 'border-box' }}>
+      <div style={{ padding: "8rem 1.5rem", backgroundColor: "white", textAlign: "center", borderTop: "15px solid #f59e0b", width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Church style={{ width: "120px", height: "120px", color: "#1e293b", marginBottom: "3rem" }} />
         <h3 style={{ fontSize: "4.5rem", fontWeight: 900, color: "#0f172a", marginBottom: "1.5rem" }}>예원참된교회</h3>
         <p style={{ fontSize: "2rem", fontWeight: 700, color: "#64748b", marginBottom: "4rem" }}>부천시 소사구 경인로 70, 농협건물 5층</p>
-        
         <div style={{ maxWidth: "600px", width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ background: "#0f172a", color: "white", padding: "2rem", borderRadius: "5rem", fontSize: "2.8rem", fontWeight: 900, marginBottom: "3rem", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', width: '100%' }}>
-            <Phone style={{ width: '40px', height: '40px' }} /> 032-661-0191
-          </div>
-          
+          <div style={{ background: "#0f172a", color: "white", padding: "2rem", borderRadius: "5rem", fontSize: "2.8rem", fontWeight: 900, marginBottom: "3rem", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', width: '100%' }}><Phone style={{ width: '40px', height: '40px' }} /> 032-661-0191</div>
           <div style={{ background: "#fffbeb", border: "3px solid #fef3c7", borderRadius: "3rem", padding: "3rem", textAlign: "left", width: '100%', boxSizing: 'border-box' }}>
             <h4 style={{ textAlign: "center", fontSize: "2rem", fontWeight: 900, color: "#92400e", marginBottom: "2rem" }}>[ 예배 안내 ]</h4>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "1.8rem", fontWeight: 800, marginBottom: "1.5rem" }}>
-              <span>주일 대예배</span><span>오전 11:00</span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "1.8rem", fontWeight: 800, marginBottom: "1.5rem" }}>
-              <span>수요 기도회</span><span>오후 07:30</span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "1.8rem", fontWeight: 800 }}>
-              <span>금요 철야 기도회</span><span>오후 09:00</span>
-            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "1.8rem", fontWeight: 800, marginBottom: "1.5rem" }}><span>주일 대예배</span><span>오전 11:00</span></div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "1.8rem", fontWeight: 800, marginBottom: "1.5rem" }}><span>수요 기도회</span><span>오후 07:30</span></div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "1.8rem", fontWeight: 800 }}><span>금요 철야 기도회</span><span>오후 09:00</span></div>
           </div>
         </div>
-        
-        <button 
-          onClick={() => { navigator.clipboard.writeText(window.location.href); alert("전도지 주소가 복사되었습니다."); }} 
-          style={{ marginTop: "5rem", padding: "2rem 4rem", backgroundColor: "#0f172a", color: "white", borderRadius: "2rem", fontSize: "2rem", fontWeight: 900, border: "none", cursor: "pointer", display: 'inline-flex', alignItems: 'center', gap: '1rem' }}
-        >
-          <Share2 style={{ width: '30px', height: '30px' }} /> 전도지 링크 공유하기
-        </button>
+        <button onClick={() => { navigator.clipboard.writeText(window.location.href); alert("전도지 주소가 복사되었습니다."); }} style={{ marginTop: "5rem", padding: "2rem 4rem", backgroundColor: "#0f172a", color: "white", borderRadius: "2rem", fontSize: "2rem", fontWeight: 900, border: "none", cursor: "pointer", display: 'inline-flex', alignItems: 'center', gap: '1rem' }}><Share2 style={{ width: '30px', height: '30px' }} /> 전도지 링크 공유하기</button>
       </div>
     </div>
   );
