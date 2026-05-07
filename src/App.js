@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { 
-  Heart, ShieldCheck, Church, Sparkles, 
+  Heart, Church, Sparkles, 
   Loader2, MessageCircle, 
   ChevronDown, Share2, Phone, Sun, CloudRain, Anchor, UserPlus
 } from 'lucide-react';
 
-// ★★★ 이 부분을 정확하게 수정해야 합니다 ★★★
+// 요청하신 설정값 적용
 const apiKey = "AIzaSyDOHPOmV_rWE_QaMYkAUKGWY_2RPYM_Mrs"; 
-const model = "gemini-1.5-flash"; // 모델명을 안정적인 버전으로 고정했습니다.
+const model = "gemini-1.5-flash"; 
 
 const styles = {
   section: { minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 1.5rem', borderBottom: '1px solid #e2e8f0', boxSizing: 'border-box' },
@@ -53,37 +53,35 @@ function App() {
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
-const getGeminiComfort = async () => {
+  const getGeminiComfort = async () => {
     if (!userInput.trim()) return;
     setLoading(true); setResponse("");
     try {
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      // v1 API 주소 사용
+      const apiUrl = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${apiKey}`;
       
       const res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({
-  contents: [{
-    parts: [{
-      text: `당신은 따뜻한 기독교 상담가입니다. 다음 고민에 대해 성경적인 위로와 짧은 기도문을 따뜻하게 작성해주세요: ${userInput}`
-    }]
-  }],
-  // 안전 설정 해제 (위로 메시지가 차단되지 않도록 함)
-  safetySettings: [
-    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-  ]
-})
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `당신은 따뜻한 기독교 상담가입니다. 다음 고민에 대해 성경적인 위로와 짧은 기도문을 정성껏 작성해주세요: ${userInput}`
+            }]
+          }],
+          // 성공률을 높이기 위한 안전 필터 해제 설정
+          safetySettings: [
+            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+          ]
         })
       });
 
       const data = await res.json();
       
-      // 에러 메시지가 온 경우 확인
       if (data.error) {
-        console.error("API 에러 상세:", data.error.message);
         setResponse("죄송합니다. 서비스 설정 확인이 필요합니다.");
         return;
       }
@@ -94,13 +92,14 @@ const getGeminiComfort = async () => {
         setResponse("따뜻한 마음으로 묵상 중입니다. 잠시 후 다시 시도해 주세요.");
       }
     } catch (e) { 
-      setResponse("연결에 문제가 발생했습니다. 네트워크를 확인해 주세요."); 
+      setResponse("연결에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요."); 
     }
     finally { setLoading(false); }
   };
 
   return (
     <div style={{ width: "100%", overflowX: "hidden", backgroundColor: "#f8fafc", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      {/* 인트로 */}
       <div style={{ ...styles.section, backgroundColor: "#fffbeb", textAlign: "center" }}>
         <Sparkles style={{ width: "120px", height: "120px", color: "#f59e0b", marginBottom: "2.5rem" }} />
         <h1 style={{ fontSize: "4.5rem", fontWeight: 900, color: "#0f172a", marginBottom: "2rem", fontStyle: "italic" }}>진정한 복의 회복,<br /><span style={{ color: "#d97706" }}>임마누엘</span></h1>
@@ -108,11 +107,13 @@ const getGeminiComfort = async () => {
         <ChevronDown style={{ width: "60px", height: "60px", color: "#cbd5e1", marginTop: "4rem" }} />
       </div>
 
+      {/* 4단계 복음 설명 */}
       <PageSection pageNo="1" title="1. 진정한 복의 시작" subtitle="THE CREATION" bg="#eff6ff" illustration={<Illustration type="creation" />} scripture="하나님이 그들에게 복을 주시며... (창세기 1:28)" content="진정한 복은 소유의 넉넉함이 아니라, 창조주 하나님과 마주하며 함께 걷는 임마누엘의 상태입니다." />
       <PageSection pageNo="2" title="2. 상실된 행복" subtitle="THE FALL" bg="#f1f5f9" illustration={<Illustration type="fall" />} scripture="죄의 삯은 사망이요... (로마서 6:23)" content="인간은 자기 노력으로 행복하려 하나님을 떠났습니다. 그러나 복의 근원을 떠난 삶의 끝은 결국 고통과 절망뿐입니다." />
       <PageSection pageNo="3" title="3. 찾아오신 하나님" subtitle="THE REDEMPTION" bg="#fffbeb" illustration={<Illustration type="redemption" />} scripture="그의 이름은 임마누엘이라 하리라... (마태복음 1:23)" content="예수 그리스도는 당신의 모든 아픔을 짊어지시고, 하나님과 다시 동행할 길을 여셨습니다." />
       <PageSection pageNo="4" title="4. 영접과 새로운 삶" subtitle="THE RESTORATION" bg="#fdf2f8" illustration={<Illustration type="restoration" />} scripture="영접하는 자 곧 그 이름을 믿는 자들에게는 하나님의 자녀가 되는 권세를 주셨으니 (요한복음 1:12)" content="예수님을 나의 구주로 모실 때, 어떤 고난도 이기는 진정한 평안이 시작됩니다." />
 
+      {/* 영접 기도문 */}
       <div style={{ ...styles.section, backgroundColor: "#fff1f2" }}>
         <div style={{ ...styles.card, border: "3px solid #fecdd3", backgroundColor: "#fff1f2" }}>
           <Heart style={{ width: "100px", height: "100px", color: "#f43f5e", marginBottom: "2.5rem" }} />
@@ -123,6 +124,7 @@ const getGeminiComfort = async () => {
         </div>
       </div>
 
+      {/* AI 위로 기능 */}
       <div style={{ ...styles.section, backgroundColor: "#0f172a", color: "white" }}>
         <MessageCircle style={{ width: "120px", height: "120px", color: "#f59e0b", marginBottom: "3rem" }} />
         <h2 style={{ fontSize: "4rem", fontWeight: 900, marginBottom: "1.5rem" }}>당신의 마음을 들려주세요</h2>
@@ -134,13 +136,21 @@ const getGeminiComfort = async () => {
             </div>
           ) : (
             <div style={{ width: '100%', padding: '3rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3rem' }}>
-              {loading ? <Loader2 className="animate-spin" style={{ width: '50px', height: '50px', margin: '0 auto' }} /> : <p style={{ fontSize: '2.2rem', fontStyle: 'italic', color: '#fef3c7', whiteSpace: 'pre-wrap' }}>{response}</p>}
+              {loading ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                  <Loader2 className="animate-spin" style={{ width: '50px', height: '50px' }} />
+                  <p style={{ fontSize: '1.5rem' }}>하늘의 위로를 묵상 중입니다...</p>
+                </div>
+              ) : (
+                <p style={{ fontSize: '2.2rem', fontStyle: 'italic', color: '#fef3c7', whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{response}</p>
+              )}
               <button onClick={() => {setResponse(""); setUserInput("");}} style={{ marginTop: '2rem', color: '#fbbf24', background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', textDecoration: 'underline' }}>다시 이야기하기</button>
             </div>
           )}
         </div>
       </div>
 
+      {/* 교회 정보 */}
       <div style={{ padding: "8rem 1.5rem", backgroundColor: "white", textAlign: "center", borderTop: "15px solid #f59e0b", width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Church style={{ width: "120px", height: "120px", color: "#1e293b", marginBottom: "3rem" }} />
         <h3 style={{ fontSize: "4.5rem", fontWeight: 900, color: "#0f172a", marginBottom: "1.5rem" }}>예원참된교회</h3>
