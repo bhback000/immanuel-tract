@@ -7,7 +7,7 @@ import {
 
 // 1. Gemini API 설정 (본인의 키를 입력하세요)
 const apiKey = "AIzaSyDOHPOmV_rWE_QaMYkAUKGWY_2RPYM_Mrs"; 
-const model = "gemini-2.5-flash-preview-09-2025";
+const model = "gemini-1.5-flash";
 
 const styles = {
   section: {
