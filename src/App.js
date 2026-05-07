@@ -53,27 +53,40 @@ function App() {
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const getGeminiComfort = async () => {
+const getGeminiComfort = async () => {
     if (!userInput.trim()) return;
     setLoading(true); setResponse("");
     try {
-      // API 주소 형식을 가장 확실한 방식으로 수정했습니다.
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      
       const res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: userInput }] }]
+          contents: [{
+            parts: [{
+              text: `당신은 따뜻한 기독교 상담가입니다. 다음 고민에 대해 성경적인 위로와 짧은 기도문을 작성해주세요: ${userInput}`
+            }]
+          }]
         })
       });
+
       const data = await res.json();
+      
+      // 에러 메시지가 온 경우 확인
+      if (data.error) {
+        console.error("API 에러 상세:", data.error.message);
+        setResponse("죄송합니다. 서비스 설정 확인이 필요합니다.");
+        return;
+      }
+
       if (data.candidates && data.candidates[0].content) {
         setResponse(data.candidates[0].content.parts[0].text);
       } else {
-        setResponse("죄송합니다. 잠시 후 다시 말씀해 주세요.");
+        setResponse("따뜻한 마음으로 묵상 중입니다. 잠시 후 다시 시도해 주세요.");
       }
     } catch (e) { 
-      setResponse("연결에 문제가 발생했습니다. API 키를 확인해 주세요."); 
+      setResponse("연결에 문제가 발생했습니다. 네트워크를 확인해 주세요."); 
     }
     finally { setLoading(false); }
   };
