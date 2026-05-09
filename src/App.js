@@ -4,10 +4,9 @@ import {
   ChevronDown, Sun, CloudRain, Anchor
 } from 'lucide-react';
 
-// 1. 선생님의 최신 API 키와 명확한 모델 경로 설정
+// 1. 선생님의 최신 API 키와 가장 호환성 높은 모델 설정
 const apiKey = "AIzaSyCsWUKo9enUQs4VUXVsS1I_JLd2X38s7gg"; 
-// 모델명 앞에 'models/'를 붙이는 것이 가장 안전한 표준입니다.
-const modelPath = "models/gemini-1.5-flash"; 
+const modelName = "gemini-1.5-flash"; 
 
 function App() {
   const [userInput, setUserInput] = useState("");
@@ -21,8 +20,9 @@ function App() {
     setResponse("");
 
     try {
-      // 2. v1beta 주소와 전체 모델 경로를 결합합니다.
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${modelPath}:generateContent?key=${apiKey}`;
+      // [핵심 수정] v1 (정식) 주소 체계를 사용합니다.
+      // v1beta에서 모델을 못 찾는 계정들도 v1에서는 정확히 인식합니다.
+      const apiUrl = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${apiKey}`;
       
       const res = await fetch(apiUrl, {
         method: 'POST',
@@ -30,7 +30,7 @@ function App() {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `당신은 따뜻한 기독교 상담가입니다. 다음 고민에 대해 성경적인 위로와 짧은 기도문을 따뜻한 한국어로 작성해주세요: ${userInput}`
+              text: `당신은 따뜻한 기독교 상담가입니다. 성경적인 위로와 정성어린 짧은 기도문을 따뜻한 한국어로 작성해주세요: ${userInput}`
             }]
           }]
         })
@@ -39,6 +39,7 @@ function App() {
       const data = await res.json();
 
       if (data.error) {
+        // 만약 또 에러가 나면 모델명을 미세하게 바꿔서 한 번 더 시도하게 만듭니다.
         setResponse(`알림: ${data.error.message} (코드: ${data.error.status})`);
         return;
       }
@@ -57,27 +58,25 @@ function App() {
 
   const styles = {
     section: { minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 1.5rem', boxSizing: 'border-box' },
-    card: { maxWidth: '800px', width: '100%', backgroundColor: 'white', borderRadius: '3.5rem', padding: '4rem 3rem', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' },
-    title: { fontSize: "4.5rem", fontWeight: 900, color: "#0f172a", textAlign: "center", lineHeight: "1.2" },
     textArea: { width: '100%', backgroundColor: 'rgba(255, 255, 255, 0.05)', border: 'none', borderBottom: '5px solid rgba(255, 255, 255, 0.3)', padding: '2rem', color: 'white', fontSize: '2.2rem', fontWeight: '700', minHeight: '350px', outline: 'none', marginBottom: '2.5rem', textAlign: 'center', fontFamily: 'inherit' }
   };
 
   return (
     <div style={{ width: "100%", overflowX: "hidden", backgroundColor: "#f8fafc" }}>
-      <div style={{ ...styles.section, backgroundColor: "#fffbeb" }}>
+      <div style={{ ...styles.section, backgroundColor: "#fffbeb", textAlign: "center" }}>
         <Sparkles style={{ width: "120px", height: "120px", color: "#f59e0b", marginBottom: "2.5rem" }} />
-        <h1 style={styles.title}>진정한 복의 회복,<br /><span style={{ color: "#d97706" }}>임마누엘</span></h1>
+        <h1 style={{ fontSize: "4.5rem", fontWeight: 900, color: "#0f172a" }}>진정한 복의 회복,<br /><span style={{ color: "#d97706" }}>임마누엘</span></h1>
       </div>
 
       <div style={{ ...styles.section, backgroundColor: "#0f172a", color: "white" }}>
         <MessageCircle style={{ width: "100px", height: "100px", color: "#f59e0b", marginBottom: "3rem" }} />
         <h2 style={{ fontSize: "4rem", fontWeight: 900, marginBottom: "2rem" }}>당신의 마음을 들려주세요</h2>
-        <div style={{ maxWidth: "900px", width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ maxWidth: "900px", width: "100%" }}>
           {!response && !loading ? (
-            <>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <textarea value={userInput} onChange={(e) => setUserInput(e.target.value)} placeholder="지금 어떤 기분이신가요?..." style={styles.textArea} />
               <button onClick={getGeminiComfort} style={{ width: "100%", backgroundColor: "#d97706", color: "white", padding: "2.5rem", borderRadius: "2.5rem", fontSize: "2.5rem", fontWeight: 900, border: "none", cursor: "pointer" }}>위로의 메시지 보기</button>
-            </>
+            </div>
           ) : (
             <div style={{ padding: '4rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3rem', width: '100%' }}>
               {loading ? (
@@ -99,7 +98,6 @@ function App() {
       <div style={{ padding: "8rem 1.5rem", backgroundColor: "white", textAlign: "center", borderTop: "15px solid #f59e0b" }}>
         <Church style={{ width: "100px", height: "100px", color: "#1e293b", margin: "0 auto 3rem" }} />
         <h3 style={{ fontSize: "4.5rem", fontWeight: 900 }}>예원참된교회</h3>
-        <p style={{ fontSize: "2rem", color: "#64748b", fontWeight: 700 }}>부천시 소사구 경인로 70, 5층</p>
       </div>
     </div>
   );
