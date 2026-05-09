@@ -4,9 +4,9 @@ import {
   ChevronDown, Sun, CloudRain, Anchor
 } from 'lucide-react';
 
-// 1. 선생님의 최신 API 키와 가장 호환성 높은 모델 설정
+// 1. API 키와 2.0 Lite 모델 설정
 const apiKey = "AIzaSyCsWUKo9enUQs4VUXVsS1I_JLd2X38s7gg"; 
-const modelName = "gemini-1.5-flash"; 
+const modelName = "gemini-2.0-flash-lite-preview-02-05"; // 최신 2.0 Lite 모델명
 
 function App() {
   const [userInput, setUserInput] = useState("");
@@ -20,9 +20,8 @@ function App() {
     setResponse("");
 
     try {
-      // [핵심 수정] v1 (정식) 주소 체계를 사용합니다.
-      // v1beta에서 모델을 못 찾는 계정들도 v1에서는 정확히 인식합니다.
-      const apiUrl = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${apiKey}`;
+      // 2. Gemini 2.0 모델을 위한 최신 v1beta 주소 체계
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
       
       const res = await fetch(apiUrl, {
         method: 'POST',
@@ -39,7 +38,7 @@ function App() {
       const data = await res.json();
 
       if (data.error) {
-        // 만약 또 에러가 나면 모델명을 미세하게 바꿔서 한 번 더 시도하게 만듭니다.
+        // 만약 2.0 모델명이 아직 계정에서 활성화되지 않았다면 안내 메시지 출력
         setResponse(`알림: ${data.error.message} (코드: ${data.error.status})`);
         return;
       }
@@ -50,12 +49,13 @@ function App() {
         setResponse("잠시 마음의 평안을 구하고 있습니다. 다시 한번 말씀해 주시겠어요?");
       }
     } catch (error) {
-      setResponse("연결에 어려움이 있습니다. 인터넷 환경을 확인하신 후 다시 시도해 주세요.");
+      setResponse("연결에 어려움이 있습니다. 잠시 후 다시 시도해 주세요.");
     } finally {
       setLoading(false);
     }
   };
 
+  // --- 디자인 (기존 스타일 유지) ---
   const styles = {
     section: { minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 1.5rem', boxSizing: 'border-box' },
     textArea: { width: '100%', backgroundColor: 'rgba(255, 255, 255, 0.05)', border: 'none', borderBottom: '5px solid rgba(255, 255, 255, 0.3)', padding: '2rem', color: 'white', fontSize: '2.2rem', fontWeight: '700', minHeight: '350px', outline: 'none', marginBottom: '2.5rem', textAlign: 'center', fontFamily: 'inherit' }
