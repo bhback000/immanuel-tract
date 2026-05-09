@@ -58,7 +58,7 @@ function App() {
     setLoading(true); setResponse("");
     try {
       // v1 API 주소 사용
-      const apiUrl = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${apiKey}`;
+const apiUrl = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${apiKey}`;
       
       const res = await fetch(apiUrl, {
         method: 'POST',
