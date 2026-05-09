@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 // 1. 설정값 (검증된 키와 가장 안정적인 모델명)
-const apiKey = "AIzaSyDlTHBZCLuL5M6YYlzRk5aAt7IZod-k9K4"; 
+const apiKey = "AIzaSyB9qhkADlStOxgq1_XsUD_vJuxJ_xX9Vv0"; 
 const modelName = "gemini-1.5-flash"; 
 
 function App() {
