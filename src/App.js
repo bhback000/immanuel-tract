@@ -5,9 +5,9 @@ import {
   ChevronDown, Share2, Phone, Sun, CloudRain, Anchor, UserPlus
 } from 'lucide-react';
 
-// 1. 선생님의 개인 계정 새 API 키와 정확한 모델 경로 설정
+// 1. 개인 계정 API 키와 표준 모델명 설정
 const apiKey = "AIzaSyDlTHBZCLuL5M6YYlzRk5aAt7IZod-k9K4"; 
-const model = "models/gemini-1.5-flash"; 
+const model = "gemini-1.5-flash"; 
 
 const styles = {
   section: { minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 1.5rem', borderBottom: '1px solid #e2e8f0', boxSizing: 'border-box' },
@@ -57,8 +57,8 @@ function App() {
     if (!userInput.trim()) return;
     setLoading(true); setResponse("");
     try {
-      // 2. 최종 확인된 v1beta 주소 체계 적용
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${model}:generateContent?key=${apiKey}`;
+      // 2. 구글 API 표준 주소 체계 (v1beta/models/모델명)
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
       
       const res = await fetch(apiUrl, {
         method: 'POST',
@@ -75,24 +75,24 @@ function App() {
       const data = await res.json();
       
       if (data.error) {
-        setResponse(`에러 메시지: ${data.error.message}`);
+        setResponse(`알림: ${data.error.message}`);
         return;
       }
 
       if (data.candidates && data.candidates[0].content) {
         setResponse(data.candidates[0].content.parts[0].text);
       } else {
-        setResponse("따뜻한 위로를 준비 중입니다. 잠시 후 다시 시도해 주세요.");
+        setResponse("잠시 묵상 중입니다. 다시 시도해 주세요.");
       }
     } catch (e) { 
-      setResponse("연결에 문제가 발생했습니다. 네트워크 환경을 확인해 주세요."); 
+      setResponse("연결이 원활하지 않습니다. LTE/5G 환경에서 다시 시도해 주세요."); 
     }
     finally { setLoading(false); }
   };
 
   return (
     <div style={{ width: "100%", overflowX: "hidden", backgroundColor: "#f8fafc", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      {/* 1. 인트로 섹션 */}
+      {/* 1. 인트로 */}
       <div style={{ ...styles.section, backgroundColor: "#fffbeb", textAlign: "center" }}>
         <Sparkles style={{ width: "120px", height: "120px", color: "#f59e0b", marginBottom: "2.5rem" }} />
         <h1 style={{ fontSize: "4.5rem", fontWeight: 900, color: "#0f172a", marginBottom: "2rem", fontStyle: "italic" }}>진정한 복의 회복,<br /><span style={{ color: "#d97706" }}>임마누엘</span></h1>
@@ -113,7 +113,7 @@ function App() {
         <div style={{ maxWidth: "900px", width: "100%", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {!response && !loading ? (
             <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <textarea value={userInput} onChange={(e) => setUserInput(e.target.value)} placeholder="마음을 적어주세요..." style={styles.textArea} />
+              <textarea value={userInput} onChange={(e) => setUserInput(e.target.value)} placeholder="고민이나 기도가 필요한 내용을 적어주세요..." style={styles.textArea} />
               <button onClick={getGeminiComfort} style={{ width: "100%", backgroundColor: "#d97706", color: "white", padding: "2.5rem", borderRadius: "2.5rem", fontSize: "2.5rem", fontWeight: 900, border: "none", cursor: "pointer" }}>위로의 메시지 보기</button>
             </div>
           ) : (
