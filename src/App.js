@@ -4,7 +4,7 @@ import {
   ChevronDown, Sun, CloudRain, Anchor, UserPlus
 } from 'lucide-react';
 
-// 1. 선생님의 API 키와 표준 모델 경로 설정
+// 1. API 키와 모델 경로 설정
 const apiKey = "AIzaSyCsWUKo9enUQs4VUXVsS1I_JLd2X38s7gg"; 
 const modelPath = "models/gemini-1.5-flash"; 
 
@@ -20,18 +20,16 @@ function App() {
     setResponse("");
 
     try {
-      // 2. [핵심 수정] v1 정식 버전 주소와 정확한 모델 경로를 사용합니다.
+      // 2. v1 정식 버전 주소 사용
       const apiUrl = `https://generativelanguage.googleapis.com/v1/${modelPath}:generateContent?key=${apiKey}`;
       
       const res = await fetch(apiUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `당신은 따뜻한 기독교 상담가입니다. 다음 고민에 대해 성경적인 위로와 정성어린 짧은 기도문을 따뜻한 한국어(해요체)로 작성해주세요: ${userInput}`
+              text: `당신은 따뜻한 기독교 상담가입니다. 성경적인 위로와 정성어린 짧은 기도문을 따뜻한 한국어로 작성해주세요: ${userInput}`
             }]
           }]
         })
@@ -40,8 +38,7 @@ function App() {
       const data = await res.json();
 
       if (data.error) {
-        // 상세 에러 메시지를 보여주어 원인을 파악합니다.
-        setResponse(`알림: ${data.error.message} (상태: ${data.error.status})`);
+        setResponse(`알림: ${data.error.message}`);
         return;
       }
 
@@ -51,7 +48,7 @@ function App() {
         setResponse("잠시 마음의 평안을 구하고 있습니다. 다시 한번 말씀해 주시겠어요?");
       }
     } catch (error) {
-      setResponse("연결에 일시적인 어려움이 있습니다. 잠시 후 다시 시도해 주세요.");
+      setResponse("연결에 어려움이 있습니다. 잠시 후 다시 시도해 주세요.");
     } finally {
       setLoading(false);
     }
