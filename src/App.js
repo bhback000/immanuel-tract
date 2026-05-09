@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 
 // 1. 선생님의 API 키와 표준 모델 경로 설정
-const apiKey = "AIzaSyB9qhkADlStOxgq1_XsUD_vJuxJ_xX9Vv0"; 
+const apiKey = "AQ.Ab8RN6KSdoxEGJz2m3TA-zaH3eC0QbVmezZ_JABbdHLsy52QTQ"; 
 const modelPath = "models/gemini-1.5-flash"; 
 
 function App() {
