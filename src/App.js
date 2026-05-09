@@ -4,9 +4,10 @@ import {
   ChevronDown, Sun, CloudRain, Anchor
 } from 'lucide-react';
 
-// 1. API 키와 2.0 Lite 모델 설정
+// 1. API 키와 가장 안정적인 '단축 모델명' 설정
 const apiKey = "AIzaSyCsWUKo9enUQs4VUXVsS1I_JLd2X38s7gg"; 
-const modelName = "gemini-2.0-flash-lite-preview-02-05"; // 최신 2.0 Lite 모델명
+// ★ 핵심 수정: 긴 버전 번호 대신 표준 별칭을 사용합니다.
+const modelName = "gemini-2.0-flash-lite"; 
 
 function App() {
   const [userInput, setUserInput] = useState("");
@@ -20,7 +21,7 @@ function App() {
     setResponse("");
 
     try {
-      // 2. Gemini 2.0 모델을 위한 최신 v1beta 주소 체계
+      // 2. 표준 v1beta 주소 체계
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
       
       const res = await fetch(apiUrl, {
@@ -38,7 +39,6 @@ function App() {
       const data = await res.json();
 
       if (data.error) {
-        // 만약 2.0 모델명이 아직 계정에서 활성화되지 않았다면 안내 메시지 출력
         setResponse(`알림: ${data.error.message} (코드: ${data.error.status})`);
         return;
       }
@@ -55,7 +55,6 @@ function App() {
     }
   };
 
-  // --- 디자인 (기존 스타일 유지) ---
   const styles = {
     section: { minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 1.5rem', boxSizing: 'border-box' },
     textArea: { width: '100%', backgroundColor: 'rgba(255, 255, 255, 0.05)', border: 'none', borderBottom: '5px solid rgba(255, 255, 255, 0.3)', padding: '2rem', color: 'white', fontSize: '2.2rem', fontWeight: '700', minHeight: '350px', outline: 'none', marginBottom: '2.5rem', textAlign: 'center', fontFamily: 'inherit' }
