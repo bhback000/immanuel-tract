@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 // 요청하신 설정값 적용
-const apiKey = "AIzaSyCsWUKo9enUQs4VUXVsS1I_JLd2X38s7gg"; 
+const apiKey = "AIzaSyDlTHBZCLuL5M6YYlzRk5aAt7IZod-k9K4"; 
 const model = "gemini-1.5-flash"; 
 
 const styles = {
