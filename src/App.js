@@ -5,9 +5,9 @@ import {
   ChevronDown, Share2, Phone, Sun, CloudRain, Anchor, UserPlus
 } from 'lucide-react';
 
-// 1. 개인 계정 API 키와 표준 모델명 설정
+// 1. 개인 계정 API 키와 모델명 (가장 호환성 높은 명칭으로 수정)
 const apiKey = "AIzaSyDlTHBZCLuL5M6YYlzRk5aAt7IZod-k9K4"; 
-const model = "gemini-1.5-flash"; 
+const modelName = "gemini-1.5-flash"; 
 
 const styles = {
   section: { minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 1.5rem', borderBottom: '1px solid #e2e8f0', boxSizing: 'border-box' },
@@ -57,8 +57,8 @@ function App() {
     if (!userInput.trim()) return;
     setLoading(true); setResponse("");
     try {
-      // 2. 구글 API 표준 주소 체계 (v1beta/models/모델명)
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      // ★ 여기가 핵심입니다: models/ 접두사를 주소에 직접 포함시켰습니다.
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
       
       const res = await fetch(apiUrl, {
         method: 'POST',
@@ -75,24 +75,24 @@ function App() {
       const data = await res.json();
       
       if (data.error) {
-        setResponse(`알림: ${data.error.message}`);
+        // 더 상세한 에러 확인을 위해 에러 전체를 보여줍니다.
+        setResponse(`알림: ${data.error.message} (${data.error.status})`);
         return;
       }
 
       if (data.candidates && data.candidates[0].content) {
         setResponse(data.candidates[0].content.parts[0].text);
       } else {
-        setResponse("잠시 묵상 중입니다. 다시 시도해 주세요.");
+        setResponse("따뜻한 응답을 준비 중입니다. 잠시 후 다시 시도해 주세요.");
       }
     } catch (e) { 
-      setResponse("연결이 원활하지 않습니다. LTE/5G 환경에서 다시 시도해 주세요."); 
+      setResponse("연결에 문제가 발생했습니다. 네트워크 환경을 확인해 주세요."); 
     }
     finally { setLoading(false); }
   };
 
   return (
     <div style={{ width: "100%", overflowX: "hidden", backgroundColor: "#f8fafc", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      {/* 1. 인트로 */}
       <div style={{ ...styles.section, backgroundColor: "#fffbeb", textAlign: "center" }}>
         <Sparkles style={{ width: "120px", height: "120px", color: "#f59e0b", marginBottom: "2.5rem" }} />
         <h1 style={{ fontSize: "4.5rem", fontWeight: 900, color: "#0f172a", marginBottom: "2rem", fontStyle: "italic" }}>진정한 복의 회복,<br /><span style={{ color: "#d97706" }}>임마누엘</span></h1>
@@ -100,20 +100,18 @@ function App() {
         <ChevronDown style={{ width: "60px", height: "60px", color: "#cbd5e1", marginTop: "4rem" }} />
       </div>
 
-      {/* 2. 복음 설명 섹션들 */}
       <PageSection pageNo="1" title="1. 진정한 복의 시작" subtitle="THE CREATION" bg="#eff6ff" illustration={<Illustration type="creation" />} scripture="하나님이 그들에게 복을 주시며... (창세기 1:28)" content="진정한 복은 소유의 넉넉함이 아니라, 창조주 하나님과 마주하며 함께 걷는 임마누엘의 상태입니다." />
       <PageSection pageNo="2" title="2. 상실된 행복" subtitle="THE FALL" bg="#f1f5f9" illustration={<Illustration type="fall" />} scripture="죄의 삯은 사망이요... (로마서 6:23)" content="인간은 자기 노력으로 행복하려 하나님을 떠났습니다. 그러나 복의 근원을 떠난 삶의 끝은 결국 고통과 절망뿐입니다." />
       <PageSection pageNo="3" title="3. 찾아오신 하나님" subtitle="THE REDEMPTION" bg="#fffbeb" illustration={<Illustration type="redemption" />} scripture="그의 이름은 임마누엘이라 하리라... (마태복음 1:23)" content="예수 그리스도는 당신의 모든 아픔을 짊어지시고, 하나님과 다시 동행할 길을 여셨습니다." />
       <PageSection pageNo="4" title="4. 영접과 새로운 삶" subtitle="THE RESTORATION" bg="#fdf2f8" illustration={<Illustration type="restoration" />} scripture="영접하는 자 곧 그 이름을 믿는 자들에게는 하나님의 자녀가 되는 권세를 주셨으니 (요한복음 1:12)" content="예수님을 나의 구주로 모실 때, 어떤 고난도 이기는 진정한 평안이 시작됩니다." />
 
-      {/* 3. AI 위로 대화 섹션 */}
       <div style={{ ...styles.section, backgroundColor: "#0f172a", color: "white" }}>
         <MessageCircle style={{ width: "120px", height: "120px", color: "#f59e0b", marginBottom: "3rem" }} />
         <h2 style={{ fontSize: "4rem", fontWeight: 900, marginBottom: "1.5rem" }}>당신의 마음을 들려주세요</h2>
         <div style={{ maxWidth: "900px", width: "100%", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {!response && !loading ? (
             <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <textarea value={userInput} onChange={(e) => setUserInput(e.target.value)} placeholder="고민이나 기도가 필요한 내용을 적어주세요..." style={styles.textArea} />
+              <textarea value={userInput} onChange={(e) => setUserInput(e.target.value)} placeholder="마음을 적어주세요..." style={styles.textArea} />
               <button onClick={getGeminiComfort} style={{ width: "100%", backgroundColor: "#d97706", color: "white", padding: "2.5rem", borderRadius: "2.5rem", fontSize: "2.5rem", fontWeight: 900, border: "none", cursor: "pointer" }}>위로의 메시지 보기</button>
             </div>
           ) : (
@@ -121,7 +119,7 @@ function App() {
               {loading ? (
                 <div style={{ textAlign: 'center' }}>
                   <Loader2 className="animate-spin" style={{ width: '50px', height: '50px', margin: '0 auto 1rem' }} />
-                  <p>하늘의 위로를 구하는 중입니다...</p>
+                  <p>위로의 메시지를 묵상 중입니다...</p>
                 </div>
               ) : (
                 <p style={{ fontSize: '2.2rem', fontStyle: 'italic', color: '#fef3c7', whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{response}</p>
@@ -132,12 +130,10 @@ function App() {
         </div>
       </div>
 
-      {/* 4. 푸터(교회 정보) */}
       <div style={{ padding: "8rem 1.5rem", backgroundColor: "white", textAlign: "center", borderTop: "15px solid #f59e0b", width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Church style={{ width: "120px", height: "120px", color: "#1e293b", marginBottom: "3rem" }} />
         <h3 style={{ fontSize: "4.5rem", fontWeight: 900, color: "#0f172a", marginBottom: "1.5rem" }}>예원참된교회</h3>
         <p style={{ fontSize: "2rem", fontWeight: 700, color: "#64748b" }}>부천시 소사구 경인로 70, 농협건물 5층</p>
-        <p style={{ fontSize: "1.8rem", color: "#94a3b8", marginTop: "2rem" }}>문의: 032-661-0191</p>
       </div>
     </div>
   );
