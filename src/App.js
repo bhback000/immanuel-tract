@@ -1,28 +1,35 @@
-import React, { useState } from 'react';
-import { 
-  Heart, Church, Sparkles, Loader2, MessageCircle, 
-  ChevronDown, Sun, CloudRain, Anchor
-} from 'lucide-react';
-
-// 1. API 키와 가장 안정적인 '단축 모델명' 설정
-const apiKey = "AIzaSyCsWUKo9enUQs4VUXVsS1I_JLd2X38s7gg"; 
-// ★ 핵심 수정: 긴 버전 번호 대신 표준 별칭을 사용합니다.
-const modelName = "gemini-2.0-flash-lite"; 
+import React, { useState, useEffect } from 'react';
+import { Church, Sparkles, Loader2, MessageCircle } from 'lucide-react';
 
 function App() {
   const [userInput, setUserInput] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+
+  // 웹사이트 주소창에서 ?key=본인의API키 를 읽어오는 기능
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const key = urlParams.get('key');
+    if (key) {
+      setApiKey(key);
+    }
+  }, []);
 
   const getGeminiComfort = async () => {
     if (!userInput.trim() || loading) return;
+
+    if (!apiKey) {
+      setResponse("알림: 주소 뒤에 올바른 보안 키가 입력되지 않았습니다. 관리자에게 문의하세요.");
+      return;
+    }
 
     setLoading(true);
     setResponse("");
 
     try {
-      // 2. 표준 v1beta 주소 체계
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+      // 가장 범용적인 gemini-1.5-flash 정식 v1 주소 사용
+      const apiUrl = `[https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=$){apiKey}`;
       
       const res = await fetch(apiUrl, {
         method: 'POST',
@@ -30,7 +37,7 @@ function App() {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `당신은 따뜻한 기독교 상담가입니다. 성경적인 위로와 정성어린 짧은 기도문을 따뜻한 한국어로 작성해주세요: ${userInput}`
+              text: `당신은 따뜻한 기독교 상담가입니다. 다음 고민에 대해 성경적인 위로와 정성어린 짧은 기도문을 따뜻한 한국어로 작성해주세요: ${userInput}`
             }]
           }]
         })
@@ -49,7 +56,7 @@ function App() {
         setResponse("잠시 마음의 평안을 구하고 있습니다. 다시 한번 말씀해 주시겠어요?");
       }
     } catch (error) {
-      setResponse("연결에 어려움이 있습니다. 잠시 후 다시 시도해 주세요.");
+      setResponse("연결에 어려움이 있습니다. 인터넷 환경을 확인하신 후 다시 시도해 주세요.");
     } finally {
       setLoading(false);
     }
@@ -63,12 +70,12 @@ function App() {
   return (
     <div style={{ width: "100%", overflowX: "hidden", backgroundColor: "#f8fafc" }}>
       <div style={{ ...styles.section, backgroundColor: "#fffbeb", textAlign: "center" }}>
-        <Sparkles style={{ width: "120px", height: "120px", color: "#f59e0b", marginBottom: "2.5rem" }} />
+        <Sparkles style="{{" width: "120px", height: color: "#f59e0b", marginBottom: "2.5rem" }}/>
         <h1 style={{ fontSize: "4.5rem", fontWeight: 900, color: "#0f172a" }}>진정한 복의 회복,<br /><span style={{ color: "#d97706" }}>임마누엘</span></h1>
       </div>
 
       <div style={{ ...styles.section, backgroundColor: "#0f172a", color: "white" }}>
-        <MessageCircle style={{ width: "100px", height: "100px", color: "#f59e0b", marginBottom: "3rem" }} />
+        <MessageCircle style="{{" width: "100px", height: color: "#f59e0b", marginBottom: "3rem" }}/>
         <h2 style={{ fontSize: "4rem", fontWeight: 900, marginBottom: "2rem" }}>당신의 마음을 들려주세요</h2>
         <div style={{ maxWidth: "900px", width: "100%" }}>
           {!response && !loading ? (
@@ -80,7 +87,7 @@ function App() {
             <div style={{ padding: '4rem', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3rem', width: '100%' }}>
               {loading ? (
                 <div style={{ textAlign: "center" }}>
-                  <Loader2 className="animate-spin" style={{ width: "60px", height: "60px", margin: "0 auto 1.5rem" }} />
+                  <Loader2 className="animate-spin" style="{{" width: "60px", height: margin: "0 auto 1.5rem" }}/>
                   <p style={{ fontSize: "1.5rem" }}>말씀을 묵상 중입니다...</p>
                 </div>
               ) : (
@@ -95,7 +102,7 @@ function App() {
       </div>
 
       <div style={{ padding: "8rem 1.5rem", backgroundColor: "white", textAlign: "center", borderTop: "15px solid #f59e0b" }}>
-        <Church style={{ width: "100px", height: "100px", color: "#1e293b", margin: "0 auto 3rem" }} />
+        <Church style="{{" width: "100px", height: color: "#1e293b", margin: "0 auto 3rem" }}/>
         <h3 style={{ fontSize: "4.5rem", fontWeight: 900 }}>예원참된교회</h3>
       </div>
     </div>
